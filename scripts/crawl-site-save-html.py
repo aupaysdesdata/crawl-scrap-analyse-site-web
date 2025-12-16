@@ -6,6 +6,9 @@ from urllib.parse import urljoin, urlparse, urlunparse, parse_qs, urlencode
 import os
 from datetime import datetime
 
+HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; AliceGontierCrawler/1.0)"}
+REQUEST_TIMEOUT = 10
+
 class Crawler:
        
     def __init__(self,max_pages, urls=[]):
@@ -85,7 +88,7 @@ class Crawler:
             url_with_utm = self.add_utm_parameters(url)
             
             # Effectuer la requête GET avec l'URL modifiée
-            r = requests.get(url_with_utm)
+            r = requests.get(url_with_utm, headers=HEADERS, timeout=REQUEST_TIMEOUT)
 
             # Vérifiez les codes de réponse
             if r.status_code == 200:
