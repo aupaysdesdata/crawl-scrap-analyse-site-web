@@ -94,7 +94,7 @@ def scrape_and_update(file_urls, chunk_size=100):
 
                     # Liens
                     # Extrait les liens (balise <a>) et distingue les liens internes des liens externes
-                    # AMELIORATIONS POSSIBLES
+                    # Classification interne/externe basée sur le domaine de la page
                     elif tag_name == "a" and element.has_attr("href"):
                         href = element["href"].strip()
                         text = element.get_text(strip=True)
