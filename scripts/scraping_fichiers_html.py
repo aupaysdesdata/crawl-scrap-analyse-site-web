@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup       # analyser et extraire facilement des élém
 import pandas as pd                 # manipuler des fichiers de données comme les fichiers CSV
 import os                           # gérer les chemins et vérifier l'existence des répertoires/fichiers
 from datetime import datetime       # récupérer la date actuelle pour nommer les fichiers générés
+from urllib.parse import urlparse, urljoin
 
 # Variables globales
 html_dir = "./data/html_pages" # Répertoire où sont stockés les fichiers HTML à analyser
@@ -71,7 +72,7 @@ def scrape_and_update(file_urls, chunk_size=100):
 
             # Extraction des éléments HTML
             if soup.body: # Analyse tous les éléments de la balise <body> du fichier HTML
-                for element in soup.find_all():
+                for element in soup.body.find_all():
                     tag_name = element.name
 
                     # Titres (H1-H6)
@@ -95,11 +96,25 @@ def scrape_and_update(file_urls, chunk_size=100):
                     # Extrait les liens (balise <a>) et distingue les liens internes des liens externes
                     # AMELIORATIONS POSSIBLES
                     elif tag_name == "a" and element.has_attr("href"):
-                        href = element["href"]
+                        href = element["href"].strip()
                         text = element.get_text(strip=True)
+                    
+                        # Ignorer les ancres et liens non web
+                        if not href or href.startswith("#") or href.startswith("mailto:") or href.startswith("tel:") or href.startswith("javascript:"):
+                            continue
+                    
                         formatted_text.append(f"[{text}]({href})\n")
                         link_count += 1
-                        if href.startswith("/") or href.startswith(html_file_path):
+                    
+                        # Déterminer interne/externe à partir du domaine de la page courante
+                        page_url = row.get("urls", "")
+                        base_netloc = urlparse(page_url).netloc
+                    
+                        abs_url = urljoin(page_url, href)
+                        link_netloc = urlparse(abs_url).netloc
+                    
+                        # Interne si lien relatif OU même domaine
+                        if link_netloc == "" or link_netloc == base_netloc:
                             internal_link_count += 1
                         else:
                             external_link_count += 1
