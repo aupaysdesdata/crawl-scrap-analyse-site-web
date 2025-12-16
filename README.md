@@ -1,5 +1,20 @@
 # crawl-scrap-analyse-site-web
 
+## TL;DR
+Ce projet propose un pipeline **crawl → scrape → métriques** pour auditer la structure et le contenu d’un site web.
+- **Entrée** : une URL “seed” (point de départ) ou une liste d’URLs
+- **Sorties** : pages HTML sauvegardées + extraction texte + indicateurs par page dans un CSV
+- **Use cases** : audit de structure (titres H1–H6), densité de contenu (paragraphes/longueur), cartographie des liens internes/externes
+
+## Démarrage rapide
+```bash
+# 1) Crawling : collecte des URLs + sauvegarde HTML
+python scripts/crawl-site-save-html.py
+
+# 2) Scraping + métriques : extraction titres/paragraphes/liens + génération CSV
+python scripts/scraping_fichiers_html.py
+```
+
 ## Description
 
 Ce projet a pour objectif de crawler, scraper et analyser des sites web afin d'extraire des informations clés telles que les titres, paragraphes et liens. Les données collectées sont ensuite traitées et sauvegardées pour des analyses approfondies, avec des métriques calculées pour chaque page visitée.
